@@ -2,3 +2,13 @@
  * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+
+
+.sentiment-badge {
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+.sentiment-badge.positive { background-color: green; color: white; }
+.sentiment-badge.negative { background-color: red; color: white; }
+.sentiment-badge.neutral { background-color: yellow; color: black; }

@@ -31,4 +31,23 @@ class MR_Post_Sentiment_Analyzer_Public {
 	}
 
 
+
+
+
+	/**
+	 * Display Sentiment Badge on Front-End
+	 */
+	public function mr_sentiment_display_badge($content){
+		if (is_single()) {
+	        $sentiment = get_post_meta(get_the_ID(), '_sentiment_analysis', true);
+	        if ($sentiment) {
+	            $badge = '<span class="sentiment-badge ' . $sentiment . '">' . ucfirst($sentiment) . '</span>';
+	            $content = $badge . $content;
+	        }
+	    }
+	    return $content;
+	}
+
+
+
 }

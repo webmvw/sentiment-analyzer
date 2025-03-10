@@ -78,6 +78,8 @@ class PostSentimentAnalyzer{
 		add_action( 'wp_enqueue_scripts', [ $plugin_public, 'enqueue_styles' ] );
 		add_action( 'wp_enqueue_scripts', [ $plugin_public, 'enqueue_scripts' ] );
 
+		add_filter('the_content', [$plugin_public, 'mr_sentiment_display_badge']);
+
 	}
 
 }

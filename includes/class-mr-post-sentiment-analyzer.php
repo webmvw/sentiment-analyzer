@@ -50,6 +50,10 @@ class PostSentimentAnalyzer{
 		add_action( 'admin_enqueue_scripts', [ $plugin_admin, 'enqueue_styles' ] );
 		add_action( 'admin_enqueue_scripts', [ $plugin_admin, 'enqueue_scripts' ] );
 
+		add_action('admin_menu', [ $plugin_admin, 'post_sentiment_analyzer_admin_menu_callback' ]);
+
+		add_action('admin_init', [ $plugin_admin, 'post_sentiment_analyzer_settings' ]);
+
 	}
 
 

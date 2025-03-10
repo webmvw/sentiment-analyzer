@@ -50,9 +50,13 @@ class PostSentimentAnalyzer{
 		add_action( 'admin_enqueue_scripts', [ $plugin_admin, 'enqueue_styles' ] );
 		add_action( 'admin_enqueue_scripts', [ $plugin_admin, 'enqueue_scripts' ] );
 
-		add_action('admin_menu', [ $plugin_admin, 'post_sentiment_analyzer_admin_menu_callback' ]);
+		add_action('admin_menu', [ $plugin_admin, 'post_sentiment_analyzer_admin_menu_callback' ] );
 
-		add_action('admin_init', [ $plugin_admin, 'post_sentiment_analyzer_settings' ]);
+		add_action('admin_init', [ $plugin_admin, 'post_sentiment_analyzer_settings' ] );
+
+		add_action('save_post', [ $plugin_admin, 'mr_sentiment_analysis_on_save_post' ] );
+
+		add_action('post_submitbox_misc_actions', [ $plugin_admin, 'mr_display_sentiment_meta_callback' ] );
 
 	}
 

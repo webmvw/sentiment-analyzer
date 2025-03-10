@@ -20,6 +20,8 @@ class MR_Post_Sentiment_Analyzer_Admin {
 	}
 
 
+
+
 	/**
 	 * Register the JavaScript for the admin area.
 	 *
@@ -32,6 +34,8 @@ class MR_Post_Sentiment_Analyzer_Admin {
 	}
 
 
+
+
 	/**
 	 * Register admin menu page.
 	 *
@@ -40,6 +44,7 @@ class MR_Post_Sentiment_Analyzer_Admin {
 	public function post_sentiment_analyzer_admin_menu_callback(){
 		add_menu_page( "Post Sentiment Analyzer", "Post Sentiment Analyzer", "manage_options", "mr-post-sentiment-analyzer", [$this, 'post_sentiment_analyzer_admin_page']);
 	}
+
 
 
 
@@ -152,6 +157,84 @@ class MR_Post_Sentiment_Analyzer_Admin {
 		<label><?php _e('Please input neutral post sentiment', 'mr-post-sentiment-analyzer'); ?></label>
 		<?php
 	}
+
+
+
+
+
+
+	/**
+	 * save_post calllback function
+	 *
+	 * @since    1.0.0
+	 */
+	public function mr_sentiment_analysis_on_save_post($post_id){
+
+		if( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ){
+			return;
+		}
+
+		if( 'post' !== get_post_type($post_id) ){
+			return;
+		}
+
+	    // Get post content
+	    $post_content = get_post_field('post_content', $post_id);
+
+	    // Get sentiment keyword lists from options
+	    $positive_keyword = get_option( 'positive_post_sentiment', [] );
+		$positive_keywords = explode(',', $positive_keyword);
+
+	    $negative_keyword = get_option( 'negative_post_sentiment', [] );
+	    $negative_keywords = explode(',', $negative_keyword);
+
+	    $neutral_keyword = get_option( 'neutral_post_sentiment', [] );
+	    $neutral_keywords = explode(',', $neutral_keyword);
+
+	    $sentiment = "";
+
+	    $positive_count = 0;
+	    $negative_count = 0;
+	    $neutral_count = 0;
+
+	    // Count occurrences of positive keywords in the post content
+	    foreach ($positive_keywords as $keyword) {
+	        $positive_count += substr_count(strtolower($post_content), strtolower($keyword));
+	    }
+
+	    // Count occurrences of negative keywords in the post content
+	    foreach ($negative_keywords as $keyword) {
+	        $negative_count += substr_count(strtolower($post_content), strtolower($keyword)); 
+	    }
+
+	    // Count occurrences of neutral keywords in the post content
+	    foreach ($neutral_keywords as $keyword) {
+	        $neutral_count += substr_count(strtolower($post_content), strtolower($keyword)); 
+	    }
+
+	    // Default to neutral if no positive or negative matches
+	    if ($positive_count > $negative_count) {
+	        $sentiment = 'positive';
+	    } elseif ($negative_count > $positive_count) {
+	        $sentiment = 'negative';
+	    } else {
+	        $sentiment = 'neutral';
+	    }
+
+
+	    // Save sentiment to post meta
+	    update_post_meta($post_id, '_sentiment_analysis', $sentiment);
+	}
+
+
+	public function mr_display_sentiment_meta_callback($post){
+		$sentiment = get_post_meta($post->ID, '_sentiment_analysis', true);
+	    if ($sentiment) {
+	        echo '<p>&nbsp;&nbsp;&nbsp;<span class="dashicons dashicons-visibility"></span> <strong>Sentiment: </strong>' . ucfirst($sentiment) . '</p>';
+	    }
+	}
+
+
 
 
 }

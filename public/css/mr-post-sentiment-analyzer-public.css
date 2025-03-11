@@ -12,3 +12,43 @@
 .sentiment-badge.positive { background-color: green; color: white; }
 .sentiment-badge.negative { background-color: red; color: white; }
 .sentiment-badge.neutral { background-color: yellow; color: black; }
+
+
+
+/* shortcode css */
+.mr-sentiment-container{
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+.mr-sentiment-post-article{
+    width: 30%;
+}
+.mr-sentiment-post-thumbnail{}
+.mr-sentiment-post-thumbnail img{
+    width: 100%;
+}
+
+.mr-sentiment-post-content{}
+.mr-sentiment-post-title{
+    font-size: 22px;
+    line-height: 32px;
+    color: #000;
+}
+.mr-sentiment-post-excerpt{
+    font-size: 16px;
+    line-height: 26px;
+    color: #000;
+}
+.mr-sentiment-post-readmore{
+    text-decoration: none;
+    background: purple;
+    color: #fff;
+    padding: 5px 15px;
+    display: inline-block;
+    border-radius: 4px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}

@@ -80,6 +80,9 @@ class PostSentimentAnalyzer{
 
 		add_filter('the_content', [$plugin_public, 'mr_sentiment_display_badge']);
 
+		add_shortcode('sentiment_filter', [$plugin_public, 'mr_sentiment_filter_shortcode_callback']);
+
+
 	}
 
 }

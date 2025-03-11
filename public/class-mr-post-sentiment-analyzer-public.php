@@ -59,80 +59,98 @@ class MR_Post_Sentiment_Analyzer_Public {
 
 		$sentiment = sanitize_text_field($atts['sentiment']);
 
-		$args = [
-			'post_type' => 'post',
-			'posts_per_page' => 10,
-			'meta_query' => []
-		];
 
-	    if ($sentiment !== 'neutral') {
-	        $args['meta_query'] = [
-	            [
-	                'key' => '_sentiment_analysis',
-	                'value' => $sentiment,
-	                'compare' => '='
-	            ]
-	        ];
-	    }
+		// Generate a unique transient key based on the sentiment and query parameters
+    	$transient_key = 'sentiment_filter_' . md5( $sentiment );
 
-	    $query = new WP_Query($args);
+    	// Attempt to retrieve cached posts from the transient
+    	$cached_posts = get_transient( $transient_key );
 
-	    if ($query->have_posts()) {
-	        ob_start();
-	        ?>
-	        <div class="mr-sentiment-container">
-	        <?php
-	        while ($query->have_posts()) {
-	            $query->the_post();
-	        ?>
-	        	<article id="post-<?php the_ID(); ?>" class="mr-sentiment-post-article">
-	
-					<?php
-					// Post Thumbnail
-					printf(
-						'<figure class="mr-sentiment-post-thumbnail"><img src="%1$s" alt="%2$s"></figure>',
-						esc_url( get_the_post_thumbnail_url( get_the_ID(), 'full' ) ),
-						esc_attr( get_post_field('post_name') )
-					);
-					?>
+    	 if ( false === $cached_posts ) {
+	        // If no cached posts, query the posts
+	        $args = [
+				'post_type' => 'post',
+				'posts_per_page' => 10,
+				'meta_query' => []
+			];
 
-					<div class="mr-sentiment-post-content">
+		    if ($sentiment !== 'neutral') {
+		        $args['meta_query'] = [
+		            [
+		                'key' => '_sentiment_analysis',
+		                'value' => $sentiment,
+		                'compare' => '='
+		            ]
+		        ];
+		    }
+
+		    $query = new WP_Query($args);
+
+	        if ($query->have_posts()) {
+		        ob_start();
+		        ?>
+		        <div class="mr-sentiment-container">
+		        <?php
+		        while ($query->have_posts()) {
+		            $query->the_post();
+		        ?>
+		        	<article id="post-<?php the_ID(); ?>" class="mr-sentiment-post-article">
+		
 						<?php
-						// Post Title
+						// Post Thumbnail
 						printf(
-							'<h4 class="mr-sentiment-post-title"><a href="%1$s">%2$s</a></h4>',
-							esc_url( get_the_permalink() ),
-							esc_html__( get_the_title(), 'mr-post-sentiment-analyzer' )
-						);
-
-						// Post Excerpt
-						printf(
-							'<div class="mr-sentiment-post-excerpt">%1$s</div>',
-							wp_kses_post( get_the_excerpt() )
-						);
-
-						// Read more link
-						printf(
-							'<a href="%1$s" class="mr-sentiment-post-readmore">%2$s</a>',
-							esc_url(get_the_permalink()),
-							esc_html__( "Read More", 'mr-post-sentiment-analyzer' )
+							'<figure class="mr-sentiment-post-thumbnail"><img src="%1$s" alt="%2$s"></figure>',
+							esc_url( get_the_post_thumbnail_url( get_the_ID(), 'full' ) ),
+							esc_attr( get_post_field('post_name') )
 						);
 						?>
-					</div>
 
-				</article>
+						<div class="mr-sentiment-post-content">
+							<?php
+							// Post Title
+							printf(
+								'<h4 class="mr-sentiment-post-title"><a href="%1$s">%2$s</a></h4>',
+								esc_url( get_the_permalink() ),
+								esc_html__( get_the_title(), 'mr-post-sentiment-analyzer' )
+							);
 
-	         <?php
+							// Post Excerpt
+							printf(
+								'<div class="mr-sentiment-post-excerpt">%1$s</div>',
+								wp_kses_post( get_the_excerpt() )
+							);
+
+							// Read more link
+							printf(
+								'<a href="%1$s" class="mr-sentiment-post-readmore">%2$s</a>',
+								esc_url(get_the_permalink()),
+								esc_html__( "Read More", 'mr-post-sentiment-analyzer' )
+							);
+							?>
+						</div>
+
+					</article>
+
+		        <?php
+			    }
+		        wp_reset_postdata();
+
+           		// Store the query results in a transient, caching for 12 hours
+            	$cached_posts = ob_get_clean();
+          		set_transient( $transient_key, $cached_posts, 12 * 3600 );
+
+		        ?>
+		    	</div>
+		        <?php
+
+		    }else {
+	            $cached_posts = 'No posts found with the selected sentiment.';
 	        }
-	        wp_reset_postdata();
-	        return ob_get_clean();
-	        ?>
-	    	</div>
-	        <?php
-
-	    } else {
-	        return 'No posts found for this sentiment.';
 	    }
+
+	    // Return the cached or freshly generated content
+	    return $cached_posts;
+	    
 	}
 
 

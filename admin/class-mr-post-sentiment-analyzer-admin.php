@@ -183,13 +183,13 @@ class MR_Post_Sentiment_Analyzer_Admin {
 
 	    // Get sentiment keyword lists from options
 	    $positive_keyword = get_option( 'positive_post_sentiment', [] );
-		$positive_keywords = explode(',', $positive_keyword);
+		$positive_keywords = explode(' ', $positive_keyword);
 
 	    $negative_keyword = get_option( 'negative_post_sentiment', [] );
-	    $negative_keywords = explode(',', $negative_keyword);
+	    $negative_keywords = explode(' ', $negative_keyword);
 
 	    $neutral_keyword = get_option( 'neutral_post_sentiment', [] );
-	    $neutral_keywords = explode(',', $neutral_keyword);
+	    $neutral_keywords = explode(' ', $neutral_keyword);
 
 	    $sentiment = "";
 
